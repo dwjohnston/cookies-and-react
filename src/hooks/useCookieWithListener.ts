@@ -22,19 +22,23 @@ export default function useCookieWithListener<T>(
   useEffect(() => {
 
     // The initial value of the cookie on the client, if it exists 
-    const cookie = cookieStore.get(name);
-    if (cookie) {
-      try {
-        setValue(JSON.parse(cookie));
-      } catch (err) {
-        setValue(cookie);
+    cookieStore.get(name).then((cookie) => {
+      if (cookie) {
+        try {
+          setValue(JSON.parse(cookie.value));
+        } catch (err) {
+          setValue(cookie.value);
+        }
       }
-    }
+    });
+
 
 
     // Any subsequent changes to the cookie will be listened to
     // and set into state
     const eventListener = (event) => {
+
+      console.log(event)
       const foundCookie = event.changed.find((cookie) => cookie.name === name);
       if (foundCookie) {
         try {
@@ -42,6 +46,13 @@ export default function useCookieWithListener<T>(
         } catch (err) {
           setValue(foundCookie.value);
         }
+
+        return; 
+      }
+
+      const deletedCookie = event.deleted.find((cookie) => cookie.name === name);
+      if(deletedCookie) {
+        setValue(null);
       }
     };
     cookieStore.addEventListener("change", eventListener);

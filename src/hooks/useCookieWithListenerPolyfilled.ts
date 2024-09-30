@@ -15,10 +15,7 @@ async function getCookie(cookieName: string) : Promise<string | null> {
     return cookieStore.get(cookieName)?.value ?? null;
   } 
 
-
   return Cookies.get(cookieName) ?? null;
-
-
 }
 
 async function setCookie(cookieName: string, value: string, options?: unknown) : Promise<void> {
